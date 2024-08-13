@@ -4,9 +4,9 @@ import avatarPic from '../../assets/avatar.png';
 import { FaSearch } from 'react-icons/fa'; 
 import Avatar from '../Avatar/index';
 
-function Header() {
+function MainHeader() {
     return (
-        <header className="header-container">
+        <header className="main-header-container">
             <div className='top-header-section'>
                 <Avatar avatarSrc={avatarPic} status="online" />
                 <button className="logout-button">Log Out</button>
@@ -23,4 +23,4 @@ function Header() {
     );
 }
 
-export default Header;
+export default MainHeader;

@@ -1,14 +1,16 @@
 import React from 'react';
 import './styles.css'
 import avatarGuestPic from '../../assets/avatar-guest.png';
-import Header from '../../components/Header';
+import MainHeader from '../../components/MainHeader';
 import ChatItem from '../../components/ChatItem';
+import SingleChatHeader from '../../components/SingleChatHeader';
+import { FaArrowRight } from 'react-icons/fa';
 
 function MainPage() {
   return (
     <div className="Main-page">
       <div className="General-left-container">
-        <Header/>
+        <MainHeader/>
         <div className="Chats-container"> 
             <a className="Chat-text">Chats</a>
             <ChatItem
@@ -27,7 +29,18 @@ function MainPage() {
             />
         </div>
       </div>
-      <div className="General-right-container"></div>
+      <div className="General-right-container">
+        <SingleChatHeader/>
+        <div className="Conversation-container"></div>
+        <div className="Sending-message-container">
+                <input 
+                    type="text" 
+                    className="message-input" 
+                    placeholder="Type your message" 
+                />
+                <FaArrowRight className="arrow-icon" /> 
+        </div>
+      </div>
     </div>
   );
 }
