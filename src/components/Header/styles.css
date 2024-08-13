@@ -1,13 +1,14 @@
 .header-container {
     width: 100%;
     height: 6rem;
-    background-color: #3333335e;
+    background-color: #3b1b322c;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
     padding: 0.75rem;
     box-sizing: border-box;
+    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.2); /* Тінь знизу */
 }
 
 .top-header-section {
@@ -15,34 +16,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.avatar-status {
-    display: flex;
-    align-items: flex-end;
-}
-
-.avatar {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.status-circle {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 50%;
-    margin-left: -0.5rem;
-    border: 0.0625rem solid #333;
-}
-
-.online {
-    background-color: green;
-}
-
-.offline {
-    background-color: red;
 }
 
 .logout-button {

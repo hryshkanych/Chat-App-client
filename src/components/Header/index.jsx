@@ -1,16 +1,14 @@
 import React from 'react';
 import './styles.css'; 
-import avatar from '../../assets/avatar.png';
+import avatarPic from '../../assets/avatar.png';
 import { FaSearch } from 'react-icons/fa'; 
+import Avatar from '../Avatar/index';
 
 function Header() {
     return (
         <header className="header-container">
             <div className='top-header-section'>
-                <div className="avatar-status">
-                    <img src={avatar} alt="User Avatar" className="avatar" />
-                    <div className="status-circle online"></div> 
-                </div>
+                <Avatar avatarSrc={avatarPic} status="online" />
                 <button className="logout-button">Log Out</button>
             </div>
             <div className="search-container">
