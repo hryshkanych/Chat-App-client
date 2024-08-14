@@ -1,7 +1,7 @@
 .Main-page {
     height: 100vh;
     width: 100vw;
-    background-color: #af89b0; 
+    background-color: #ebe3eb; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,11 +10,85 @@
 .General-left-container {
     width: 38%;
     height: 100vh;
-    background-color: aquamarine;
+    /* background-color: aquamarine; */
 }
 
 .General-right-container {
     flex: 1;
     height: 100vh;
-    background-color: rgb(85, 129, 156);
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(252, 240, 255);
 }
+
+.Chats-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.Chat-text {
+    color: rgb(43, 98, 226);
+    font-weight: 500;
+    font-size: larger;
+    padding: 0.75rem;
+}
+
+/* ------------------------------------------- */
+.Conversation-container {
+    height: 81%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+/* ------------------------------------------- */
+
+.Sending-message-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(55, 51, 53, 0.241);
+}
+
+.message-input {
+    display: flex;
+    flex-direction: row;
+    width: 92%;
+    border-radius: 2rem;
+    padding-left: 1rem;
+    border: none;
+    outline: none;
+}
+
+.message-input::placeholder {
+    color: #aaa;
+}
+
+.message-input:focus::placeholder {
+    color: transparent;
+}
+
+.Message-input-container{
+    display: flex;
+    width: 90%;
+    height: 2rem;
+    border-radius: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    border: 0.0625rem solid #ccc;
+    background-color: rgb(255, 255, 255);
+}
+
+.arrow-icon {
+    padding-right: 1rem;
+    font-size: 1rem;
+    color: #aaa;
+}
+
+

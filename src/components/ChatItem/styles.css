@@ -1,0 +1,58 @@
+.chat-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #723d59;
+    /* background-color: bisque; */
+  }
+  
+  .chat-content {
+    flex: 1;
+    margin-left: 0.625rem; /* Відступ між аватаром і контентом */
+  }
+  
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .end-info {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .name {
+    font-weight: bold;
+    font-size: 0.875rem; /* 14px */
+  }
+  
+  .date {
+    font-size: 0.75rem; /* 12px */
+    color: #888;
+  }
+  
+  .message {
+    font-size: 0.875rem; /* 14px */
+    margin-top: 0.3125rem; /* 5px */
+  }
+
+  .settings-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    font-size: 0.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .settings-button:hover {
+    color: #555;
+  }
+  
+  .rotated-icon {
+    transform: rotate(90deg); 
+    
+  }
