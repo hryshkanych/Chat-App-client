@@ -12,12 +12,14 @@ function MainHeader() {
                 <button className="logout-button">Log Out</button>
             </div>
             <div className="search-container">
+                <div className="search-input-container">
                 <FaSearch className="search-icon" /> 
-                <input 
-                    type="text" 
-                    className="search-input" 
-                    placeholder="Search or start new chat" 
-                />
+                    <input 
+                        type="text" 
+                        className="search-input" 
+                        placeholder="Search or start new chat" 
+                    />
+                </div>
             </div>
         </header>
     );

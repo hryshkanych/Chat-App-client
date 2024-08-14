@@ -7,6 +7,7 @@ function SingleChatHeader() {
     return (
         <div className="single-header-container">
             <Avatar avatarSrc={avatarPic} status="online" />
+            <a>Khrystyna Hryshkanych</a>
         </div>
     );
 }

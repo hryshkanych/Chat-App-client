@@ -38,7 +38,10 @@
 /* ------------------------------------------- */
 .Conversation-container {
     height: 81%;
-
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
 }
 
 /* ------------------------------------------- */
@@ -55,11 +58,11 @@
 
 .message-input {
     display: flex;
-    width: 90%;
-    height: 2rem;
-    padding: 0.25rem 1rem;
+    flex-direction: row;
+    width: 92%;
     border-radius: 2rem;
-    border: 0.0625rem solid #ccc;
+    padding-left: 1rem;
+    border: none;
     outline: none;
 }
 
@@ -71,9 +74,19 @@
     color: transparent;
 }
 
+.Message-input-container{
+    display: flex;
+    width: 90%;
+    height: 2rem;
+    border-radius: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    border: 0.0625rem solid #ccc;
+    background-color: rgb(255, 255, 255);
+}
+
 .arrow-icon {
-    position: absolute;
-    right: 3rem;
+    padding-right: 1rem;
     font-size: 1rem;
     color: #aaa;
 }
