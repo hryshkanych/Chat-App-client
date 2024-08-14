@@ -5,7 +5,7 @@ import MainHeader from '../../components/MainHeader';
 import ChatItem from '../../components/ChatItem';
 import SingleChatHeader from '../../components/SingleChatHeader';
 import { FaArrowRight } from 'react-icons/fa';
-import { ReceivedMessage, SentMessage } from '../../components/Message';
+import Conversation from '../../components/Conversation';
 
 function MainPage() {
   return (
@@ -32,11 +32,7 @@ function MainPage() {
       </div>
       <div className="General-right-container">
         <SingleChatHeader/>
-        <div className="Conversation-container">
-          <ReceivedMessage text="Hi, how are you?" time="8/17/2022, 7:43 AM" />
-          <SentMessage text="Not bad. What about you?" time="8/17/2022, 7:45 AM" />
-          <SentMessage text="How was your meeting?" time="8/17/2022, 7:48 AM" />
-        </div>
+        <Conversation/>
         <div className="Sending-message-container">
           <div className="Message-input-container">
                 <input 
