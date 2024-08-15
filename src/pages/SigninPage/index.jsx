@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signinUser } from '../../services/userService';
+import { useUserContext } from '../../contexts/userContext';
 import './styles.css';
 
 function SignInPage() {
@@ -8,6 +9,8 @@ function SignInPage() {
     email: '',
     password: '',
   });
+
+  const { setUser } = useUserContext();
 
   const navigate = useNavigate();
 
@@ -17,9 +20,12 @@ function SignInPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      await signinUser(formData);
+      const response = await signinUser(formData);
+      setUser(response.user);
+      console.log(response.user);
+      
       alert('Login successful');
       navigate('/chatting');
     } catch (error) {

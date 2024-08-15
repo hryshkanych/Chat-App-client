@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signupUser } from '../../services/userService';
 import './styles.css';
+import { useUserContext } from '../../contexts/userContext';
 
 function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ function SignUpPage() {
     password: '',
     confirmPassword: '',
   });
+
+  const { setUser } = useUserContext();
 
   const navigate = useNavigate();
 
@@ -29,7 +32,10 @@ function SignUpPage() {
     try {
       const { name, surname, email, password } = formData;
       const userData = { firstName: name, lastName: surname, email, password };
-      await signupUser(userData);
+      const response = await signupUser(userData);
+      setUser(response.user);
+      
+      
       alert('Registration successful');
       navigate('/chatting');
     } catch (error) {
