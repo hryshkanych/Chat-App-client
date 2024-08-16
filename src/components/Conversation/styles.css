@@ -4,4 +4,23 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem;
+  overflow-y: auto;
+}
+
+.Conversation-container::-webkit-scrollbar {
+  width: 0.5rem; /* Ширина скролл-бара */
+}
+
+.Conversation-container::-webkit-scrollbar-track {
+  background: #e0e0e0; /* Колір треку скролл-бара */
+  border-radius: 0.5rem; /* Округлені кути для треку */
+}
+
+.Conversation-container::-webkit-scrollbar-thumb {
+  background: #bba5b0; /* Колір "палиці" скролл-бара */
+  border-radius: 0.5rem; /* Округлені кути для "палиці" */
+}
+
+.Conversation-container::-webkit-scrollbar-thumb:hover {
+  background: #8c6578; /* Колір "палиці" при наведенні */
 }

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './styles.css';
+import { io } from 'socket.io-client';
 import avatarGuestPic from '../../assets/avatar-guest.png';
 import MainHeader from '../../components/MainHeader';
 import ChatItem from '../../components/ChatItem';
 import SingleChatHeader from '../../components/SingleChatHeader';
 import { FaArrowRight } from 'react-icons/fa';
 import Conversation from '../../components/Conversation';
-import { getUserChats, getMessagesInChat, sendMessage } from '../../services/chatService';
+import { getUserChats, getMessagesInChat } from '../../services/chatService';
 import { useUserContext } from '../../contexts/userContext';
 import NoConversation from '../../components/NoConversation';
+
+const socket = io('http://localhost:3000');
 
 function MainPage() {
   const [chats, setChats] = useState([]);
@@ -31,6 +34,31 @@ function MainPage() {
     fetchChats();
   }, [user]);
 
+  useEffect(() => {
+    if (selectedChat) {
+      socket.emit('joinChat', { chatId: selectedChat });
+
+      socket.on('receiveMessage', (message) => {
+        if (message.chatId === selectedChat) {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        }
+
+        // Оновлення останнього повідомлення в чаті
+        setChats((prevChats) => 
+          prevChats.map((chat) => 
+            chat.chatId === message.chatId 
+              ? { ...chat, lastMessage: message } 
+              : chat
+          )
+        );
+      });
+    }
+
+    return () => {
+      socket.off('receiveMessage');
+    };
+  }, [selectedChat]);
+
   const handleChatClick = async (chatId) => {
     try {
       setSelectedChat(chatId);
@@ -41,14 +69,24 @@ function MainPage() {
     }
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (newMessage.trim() && selectedChat) {
-      try {
-        const sentMessage = await sendMessage(user.id, selectedChat, newMessage);
-        setNewMessage('');
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
+      const message = {
+        senderId: user.id,
+        chatId: selectedChat,
+        text: newMessage,
+        createdAt: new Date().toISOString(), 
+      };
+      socket.emit('sendMessage', message);
+      setNewMessage('');
+
+      setChats((prevChats) => 
+        prevChats.map((chat) => 
+          chat.chatId === selectedChat 
+            ? { ...chat, lastMessage: message } 
+            : chat
+        )
+      );
     }
   };
 
@@ -64,7 +102,7 @@ function MainPage() {
               avatarSrc={avatarGuestPic}
               name={`${chat.user.firstName} ${chat.user.lastName}`}
               message={chat.lastMessage ? chat.lastMessage.text : 'No messages yet'}
-              date={chat.lastMessage ? new Date(chat.lastMessage.sentAt).toLocaleDateString() : ''}
+              date={chat.lastMessage ? new Date(chat.lastMessage.createdAt).toLocaleDateString() : ''}
               status="online"
               onClick={() => handleChatClick(chat.chatId)}
             />
