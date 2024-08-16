@@ -3,9 +3,9 @@ import Avatar from '../Avatar';
 import './styles.css';
 import { FaEllipsisH } from 'react-icons/fa'; // Імпортуйте іконку трьох крапок
 
-const ChatItem = ({ avatarSrc, name, message, date, status }) => {
+const ChatItem = ({ avatarSrc, name, message, date, status, onClick }) => {
   return (
-    <div className="chat-item">
+    <div className="chat-item"  onClick={onClick} >
       <Avatar avatarSrc={avatarSrc} status={status} />
       <div className="chat-content">
         <div className="chat-header">

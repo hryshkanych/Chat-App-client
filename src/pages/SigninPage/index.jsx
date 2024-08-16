@@ -23,7 +23,11 @@ function SignInPage() {
   
     try {
       const response = await signinUser(formData);
+      
+      localStorage.setItem('user', JSON.stringify(response.user));
       setUser(response.user);
+
+      
       console.log(response.user);
       
       alert('Login successful');

@@ -1,13 +1,18 @@
 import React from 'react';
 import { ReceivedMessage, SentMessage } from '../Message';
 import './styles.css';
+import { useUserContext } from '../../contexts/userContext';
 
-const Conversation = () => {
+const Conversation = ({ messages }) => {
+  const { user } = useUserContext();
+
   return (
     <div className="Conversation-container">
-      <ReceivedMessage text="Hi, how are you?" time="8/17/2022, 7:43 AM" />
-      <SentMessage text="Not bad. What about you?" time="8/17/2022, 7:45 AM" />
-      <SentMessage text="How was your meeting?" time="8/17/2022, 7:48 AM" />
+      {messages.map((msg, index) => (
+        msg.senderId === user.id ? 
+          <SentMessage key={index} text={msg.text} time={new Date(msg.createdAt).toLocaleString()} /> :
+          <ReceivedMessage key={index} text={msg.text} time={new Date(msg.createdAt).toLocaleString()} />
+      ))}
     </div>
   );
 };

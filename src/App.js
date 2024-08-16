@@ -1,19 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { UserProvider } from './contexts/userContext';
+import { Navigate, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { UserProvider, useUserContext } from './contexts/userContext';
 import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignupPage';
 import SignInPage from './pages/SigninPage';
 import './App.css';
 
 function App() {
+  const { user } = useUserContext();
   return (
-    <UserProvider>
       <Router>
         <div className="App">
           <main>
             <Routes>
-              <Route path="/" element={<SignInPage/>} />
+              <Route path="/" element={user ? <MainPage /> : <Navigate to={"/signin"} />} />
               <Route path="/signup" element={<SignUpPage/>} />
               <Route path="/signin" element={<SignInPage/>} />
               <Route path="/chatting" element={<MainPage/>} />
@@ -21,7 +21,6 @@ function App() {
           </main>
         </div>
       </Router>
-    </UserProvider>
   );
 }
 

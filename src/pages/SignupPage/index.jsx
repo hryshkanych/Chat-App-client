@@ -33,7 +33,12 @@ function SignUpPage() {
       const { name, surname, email, password } = formData;
       const userData = { firstName: name, lastName: surname, email, password };
       const response = await signupUser(userData);
+      
+      localStorage.setItem('user', JSON.stringify(response.user));
       setUser(response.user);
+
+      
+      console.log(response.user);
       
       
       alert('Registration successful');
