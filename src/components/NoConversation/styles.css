@@ -1,0 +1,21 @@
+.no-conversation-container {
+    flex: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(252, 240, 255);
+    justify-content: center;
+    align-items: center;
+}
+
+.text-wrapper {
+    background-color: rgba(111, 102, 120, 0.174);
+    padding: 0.5rem;
+    border-radius: 2rem;
+}
+
+.text-wrapper a{
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+

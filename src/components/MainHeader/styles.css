@@ -65,7 +65,7 @@
 }
 
 .search-input::placeholder {
-    color: #aaa;
+    color: #0a0a0a;
 }
 
 .search-input:focus::placeholder {
@@ -77,4 +77,17 @@
     color: #aaa;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
+}
+
+.add-chat-button {
+    display: flex;
+    aspect-ratio: 1 / 1;
+    width: auto; 
+    height: 100%;
+    border-radius: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0.5rem;
+    border: none;
+    background-color: #3646f437;
 }
