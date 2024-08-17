@@ -18,7 +18,22 @@ function MainPage() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [onlineUsers, setOnlineUsers] = useState({});
   const { user } = useUserContext();
+
+  useEffect(() => {
+    // Notify server of user connection
+    socket.emit('userConnected', user.id);
+
+    // Handle updates to online users
+    socket.on('updateUserList', (users) => {
+      setOnlineUsers(users);
+    });
+
+    return () => {
+      socket.off('updateUserList');
+    };
+  }, [user.id]);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -43,14 +58,17 @@ function MainPage() {
           setMessages((prevMessages) => [...prevMessages, message]);
         }
 
-        // Оновлення останнього повідомлення в чаті
-        setChats((prevChats) => 
-          prevChats.map((chat) => 
-            chat.chatId === message.chatId 
-              ? { ...chat, lastMessage: message } 
+        // Update last message in chat list and sort chats
+        setChats((prevChats) => {
+          const updatedChats = prevChats.map((chat) =>
+            chat.chatId === message.chatId
+              ? { ...chat, lastMessage: message }
               : chat
-          )
-        );
+          );
+          return updatedChats.sort((a, b) =>
+            new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt)
+          );
+        });
       });
     }
 
@@ -80,15 +98,29 @@ function MainPage() {
       socket.emit('sendMessage', message);
       setNewMessage('');
 
-      setChats((prevChats) => 
-        prevChats.map((chat) => 
-          chat.chatId === selectedChat 
-            ? { ...chat, lastMessage: message } 
+      // Update last message in chat list and sort chats
+      setChats((prevChats) => {
+        const updatedChats = prevChats.map((chat) =>
+          chat.chatId === selectedChat
+            ? { ...chat, lastMessage: message }
             : chat
-        )
-      );
+        );
+        return updatedChats.sort((a, b) =>
+          new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt)
+        );
+      });
     }
   };
+
+  // Find the other user ID in the selected chat
+  const otherUserId = selectedChat 
+    ? chats.find(chat => chat.chatId === selectedChat)?.user.otherUserId 
+    : null;
+
+  // Determine the status of the other user
+  const otherUserStatus = otherUserId 
+    ? (onlineUsers[otherUserId] ? 'online' : 'offline') 
+    : 'offline';
 
   return (
     <div className="Main-page">
@@ -99,11 +131,12 @@ function MainPage() {
           {chats.map(chat => (
             <ChatItem
               key={chat.chatId}
+              otherUserId={chat.user.otherUserId}
               avatarSrc={avatarGuestPic}
               name={`${chat.user.firstName} ${chat.user.lastName}`}
               message={chat.lastMessage ? chat.lastMessage.text : 'No messages yet'}
               date={chat.lastMessage ? new Date(chat.lastMessage.createdAt).toLocaleDateString() : ''}
-              status="online"
+              status={onlineUsers[chat.user.otherUserId] ? 'online' : 'offline'}
               onClick={() => handleChatClick(chat.chatId)}
             />
           ))}
@@ -115,7 +148,7 @@ function MainPage() {
             <SingleChatHeader 
               name={`${chats.find(chat => chat.chatId === selectedChat).user.firstName} 
               ${chats.find(chat => chat.chatId === selectedChat).user.lastName}`} 
-              status="online" 
+              status={otherUserStatus}
             />
             <Conversation messages={messages} />
             <div className="Sending-message-container">
