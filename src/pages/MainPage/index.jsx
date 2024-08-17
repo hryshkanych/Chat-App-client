@@ -15,17 +15,17 @@ const socket = io('http://localhost:3000');
 
 function MainPage() {
   const [chats, setChats] = useState([]);
+  const [filteredChats, setFilteredChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [onlineUsers, setOnlineUsers] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
   const { user } = useUserContext();
 
   useEffect(() => {
-    // Notify server of user connection
     socket.emit('userConnected', user.id);
 
-    // Handle updates to online users
     socket.on('updateUserList', (users) => {
       setOnlineUsers(users);
     });
@@ -41,6 +41,7 @@ function MainPage() {
         const userId = user.id;
         const userChats = await getUserChats(userId);
         setChats(userChats);
+        filterChats(userChats, searchQuery);
       } catch (error) {
         console.error('Error fetching chats:', error);
       }
@@ -58,9 +59,8 @@ function MainPage() {
           setMessages((prevMessages) => [...prevMessages, message]);
         }
 
-        // Update last message in chat list and sort chats
-        setChats((prevChats) => {
-          const updatedChats = prevChats.map((chat) =>
+        const updateChats = (chatList) => {
+          const updatedChats = chatList.map((chat) =>
             chat.chatId === message.chatId
               ? { ...chat, lastMessage: message }
               : chat
@@ -68,14 +68,18 @@ function MainPage() {
           return updatedChats.sort((a, b) =>
             new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt)
           );
-        });
+        };
+
+        const updatedChats = updateChats(chats);
+        setChats(updatedChats);
+        filterChats(updatedChats, searchQuery);
       });
     }
 
     return () => {
       socket.off('receiveMessage');
     };
-  }, [selectedChat]);
+  }, [selectedChat, chats, searchQuery]);
 
   const handleChatClick = async (chatId) => {
     try {
@@ -98,26 +102,39 @@ function MainPage() {
       socket.emit('sendMessage', message);
       setNewMessage('');
 
-      // Update last message in chat list and sort chats
-      setChats((prevChats) => {
-        const updatedChats = prevChats.map((chat) =>
-          chat.chatId === selectedChat
-            ? { ...chat, lastMessage: message }
-            : chat
-        );
-        return updatedChats.sort((a, b) =>
-          new Date(b.lastMessage?.createdAt) - new Date(a.lastMessage?.createdAt)
-        );
-      });
+      const updatedChats = chats.map((chat) =>
+        chat.chatId === selectedChat
+          ? { ...chat, lastMessage: message }
+          : chat
+      );
+      setChats(updatedChats);
+      filterChats(updatedChats, searchQuery);
     }
   };
 
-  // Find the other user ID in the selected chat
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    filterChats(chats, query);
+  };
+
+  const filterChats = (chatList, query) => {
+    const lowercasedQuery = query.toLowerCase();
+    const filtered = chatList.filter(chat =>
+      chat.user.firstName.toLowerCase().includes(lowercasedQuery) ||
+      chat.user.lastName.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredChats(filtered);
+  };
+
+  const handleChatCreated = (newChat) => {
+    setChats((prevChats) => [...prevChats, newChat]);
+    filterChats([...chats, newChat], searchQuery);
+  };
+
   const otherUserId = selectedChat 
     ? chats.find(chat => chat.chatId === selectedChat)?.user.otherUserId 
     : null;
 
-  // Determine the status of the other user
   const otherUserStatus = otherUserId 
     ? (onlineUsers[otherUserId] ? 'online' : 'offline') 
     : 'offline';
@@ -125,10 +142,14 @@ function MainPage() {
   return (
     <div className="Main-page">
       <div className="General-left-container">
-        <MainHeader />
+        <MainHeader 
+          searchQuery={searchQuery} 
+          onSearchChange={handleSearchChange} 
+          onChatCreated={handleChatCreated} 
+        />
         <div className="Chats-container">
           <a className="Chat-text">Chats</a>
-          {chats.map(chat => (
+          {filteredChats.map(chat => (
             <ChatItem
               key={chat.chatId}
               otherUserId={chat.user.otherUserId}

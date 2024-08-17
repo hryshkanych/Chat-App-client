@@ -5,6 +5,8 @@ import MainPage from './pages/MainPage';
 import SignUpPage from './pages/SignupPage';
 import SignInPage from './pages/SigninPage';
 import './App.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { user } = useUserContext();
@@ -19,6 +21,7 @@ function App() {
               <Route path="/chatting" element={<MainPage/>} />
             </Routes>
           </main>
+          <ToastContainer />
         </div>
       </Router>
   );

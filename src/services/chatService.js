@@ -12,6 +12,16 @@ export const getUserChats = async (userId) => {
   }
 };
 
+export const createChat = async (participants) => {
+  try {
+    const response = await axios.post(`${API_URL}/chats`, { participants });
+    return response.data.chat;
+  } catch (error) {
+    console.error('Error creating chat:', error);
+    throw error;
+  }
+};
+
 export const getMessagesInChat = async (chatId) => {
   try {
     const response = await axios.get(`${API_URL}/messages/${chatId}`);
