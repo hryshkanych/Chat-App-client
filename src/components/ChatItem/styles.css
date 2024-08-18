@@ -42,7 +42,7 @@
   margin-top: 0.3125rem; /* 5px */
 }
 
-.settings-button {
+.trash-button {
   background: none;
   border: none;
   cursor: pointer;
@@ -53,10 +53,10 @@
   align-items: center;
 }
 
-.settings-button:hover {
+.trash-button:hover {
   color: #555;
 }
 
-.rotated-icon {
-  transform: rotate(90deg);
+.trash-icon {
+  color: #723d59;
 }

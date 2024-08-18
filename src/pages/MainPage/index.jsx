@@ -7,7 +7,7 @@ import ChatItem from '../../components/ChatItem';
 import SingleChatHeader from '../../components/SingleChatHeader';
 import { FaArrowRight } from 'react-icons/fa';
 import Conversation from '../../components/Conversation';
-import { getUserChats, getMessagesInChat } from '../../services/chatService';
+import { getUserChats, getMessagesInChat, deleteChat } from '../../services/chatService';
 import { useUserContext } from '../../contexts/userContext';
 import NoConversation from '../../components/NoConversation';
 import { useSocketContext } from '../../contexts/socketContext';
@@ -41,7 +41,6 @@ function MainPage() {
   useEffect(() => {
     if(socket){
       socket.on("receiveMessage", (newMessage) => {
-
         const updateChats = (chatList) => {
           const updatedChats = chatList.map((chat) =>
             chat.chatId === newMessage.chatId
@@ -91,9 +90,9 @@ function MainPage() {
       socket.emit('sendMessage', message);
       setNewMessage('');
 
-    if( selectedChat === message.chatId) {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    }
+      if(selectedChat === message.chatId) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
 
       const updatedChats = chats.map((chat) =>
         chat.chatId === selectedChat
@@ -125,6 +124,23 @@ function MainPage() {
     filterChats([...chats, newChat], searchQuery);
   };
 
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await deleteChat(chatId);
+
+      const updatedChats = chats.filter(chat => chat.chatId !== chatId);
+      setChats(updatedChats);
+      filterChats(updatedChats, searchQuery);
+
+      if (selectedChat === chatId) {
+        setSelectedChat(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
+  };
+
   const otherUserId = selectedChat 
     ? chats.find(chat => chat.chatId === selectedChat)?.user.otherUserId 
     : null;
@@ -153,6 +169,7 @@ function MainPage() {
               date={chat.lastMessage ? new Date(chat.lastMessage.createdAt).toLocaleDateString() : ''}
               status={onlineUsers[chat.user.otherUserId] ? 'online' : 'offline'}
               onClick={() => handleChatClick(chat.chatId)}
+              onDelete={() => handleDeleteChat(chat.chatId)}
             />
           ))}
         </div>
