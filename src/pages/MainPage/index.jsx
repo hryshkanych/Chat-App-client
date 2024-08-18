@@ -10,8 +10,8 @@ import Conversation from '../../components/Conversation';
 import { getUserChats, getMessagesInChat } from '../../services/chatService';
 import { useUserContext } from '../../contexts/userContext';
 import NoConversation from '../../components/NoConversation';
-
-const socket = io('http://localhost:3000');
+import { useSocketContext } from '../../contexts/socketContext';
+import { toast } from 'react-toastify';
 
 function MainPage() {
   const [chats, setChats] = useState([]);
@@ -19,21 +19,9 @@ function MainPage() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [onlineUsers, setOnlineUsers] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useUserContext();
-
-  useEffect(() => {
-    socket.emit('userConnected', user.id);
-
-    socket.on('updateUserList', (users) => {
-      setOnlineUsers(users);
-    });
-
-    return () => {
-      socket.off('updateUserList');
-    };
-  }, [user.id]);
+  const { socket, onlineUsers } = useSocketContext();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -51,18 +39,13 @@ function MainPage() {
   }, [user]);
 
   useEffect(() => {
-    if (selectedChat) {
-      socket.emit('joinChat', { chatId: selectedChat });
-
-      socket.on('receiveMessage', (message) => {
-        if (message.chatId === selectedChat) {
-          setMessages((prevMessages) => [...prevMessages, message]);
-        }
+    if(socket){
+      socket.on("receiveMessage", (newMessage) => {
 
         const updateChats = (chatList) => {
           const updatedChats = chatList.map((chat) =>
-            chat.chatId === message.chatId
-              ? { ...chat, lastMessage: message }
+            chat.chatId === newMessage.chatId
+              ? { ...chat, lastMessage: newMessage }
               : chat
           );
           return updatedChats.sort((a, b) =>
@@ -72,14 +55,20 @@ function MainPage() {
 
         const updatedChats = updateChats(chats);
         setChats(updatedChats);
-        filterChats(updatedChats, searchQuery);
-      });
-    }
+        filterChats(updatedChats, searchQuery); 
 
-    return () => {
-      socket.off('receiveMessage');
-    };
-  }, [selectedChat, chats, searchQuery]);
+        if(newMessage.chatId === selectedChat) {
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        } else {
+          toast.info(newMessage.text);
+        }
+      })
+      return () => {
+        socket.off('receiveMessage');
+      };
+    }
+ 
+  }, [selectedChat, chats, searchQuery, messages]);
 
   const handleChatClick = async (chatId) => {
     try {
@@ -102,11 +91,16 @@ function MainPage() {
       socket.emit('sendMessage', message);
       setNewMessage('');
 
+    if( selectedChat === message.chatId) {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
+
       const updatedChats = chats.map((chat) =>
         chat.chatId === selectedChat
           ? { ...chat, lastMessage: message }
           : chat
       );
+
       setChats(updatedChats);
       filterChats(updatedChats, searchQuery);
     }
