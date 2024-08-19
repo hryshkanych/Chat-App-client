@@ -26,8 +26,6 @@ export const signinUser = async (userData) => {
 export const getUserByName = async (firstName, lastName) => {
   try {
     const response = await axios.post(`${API_URL}/getUserByName`, { firstName, lastName });
-    console.log('dfdfdfdfdf    '+response.data.user._id);
-    
     return response.data.user;
   } catch (error) {
     console.error('Error fetching user by name:', error);

@@ -3,7 +3,9 @@ import React, { createContext, useState, useContext } from 'react';
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || null
+  );
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -12,6 +14,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUserContext = () => {
-    return useContext(UserContext);
-};
+export const useUserContext = () => useContext(UserContext);

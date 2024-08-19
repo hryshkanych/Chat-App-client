@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './styles.css';
-import { io } from 'socket.io-client';
 import avatarGuestPic from '../../assets/avatar-guest.png';
 import MainHeader from '../../components/MainHeader';
 import ChatItem from '../../components/ChatItem';
@@ -39,8 +38,8 @@ function MainPage() {
   }, [user]);
 
   useEffect(() => {
-    if(socket){
-      socket.on("receiveMessage", (newMessage) => {
+    if (socket) {
+      socket.on('receiveMessage', (newMessage) => {
         const updateChats = (chatList) => {
           const updatedChats = chatList.map((chat) =>
             chat.chatId === newMessage.chatId
@@ -54,20 +53,20 @@ function MainPage() {
 
         const updatedChats = updateChats(chats);
         setChats(updatedChats);
-        filterChats(updatedChats, searchQuery); 
+        filterChats(updatedChats, searchQuery);
 
-        if(newMessage.chatId === selectedChat) {
+        if (newMessage.chatId === selectedChat) {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
-        } else {
-          toast.info(newMessage.text);
+        } else if (newMessage.senderId !== user.id) {
+          toast.info(`${newMessage.senderName}: ${newMessage.text}`);
         }
-      })
+      });
+
       return () => {
         socket.off('receiveMessage');
       };
     }
- 
-  }, [selectedChat, chats, searchQuery, messages]);
+  }, [selectedChat, chats, searchQuery, messages, socket, user.id]);
 
   const handleChatClick = async (chatId) => {
     try {
@@ -85,12 +84,12 @@ function MainPage() {
         senderId: user.id,
         chatId: selectedChat,
         text: newMessage,
-        createdAt: new Date().toISOString(), 
+        createdAt: new Date().toISOString(),
       };
       socket.emit('sendMessage', message);
       setNewMessage('');
 
-      if(selectedChat === message.chatId) {
+      if (selectedChat === message.chatId) {
         setMessages((prevMessages) => [...prevMessages, message]);
       }
 
@@ -112,7 +111,7 @@ function MainPage() {
 
   const filterChats = (chatList, query) => {
     const lowercasedQuery = query.toLowerCase();
-    const filtered = chatList.filter(chat =>
+    const filtered = chatList.filter((chat) =>
       chat.user.firstName.toLowerCase().includes(lowercasedQuery) ||
       chat.user.lastName.toLowerCase().includes(lowercasedQuery)
     );
@@ -128,7 +127,7 @@ function MainPage() {
     try {
       await deleteChat(chatId);
 
-      const updatedChats = chats.filter(chat => chat.chatId !== chatId);
+      const updatedChats = chats.filter((chat) => chat.chatId !== chatId);
       setChats(updatedChats);
       filterChats(updatedChats, searchQuery);
 
@@ -141,25 +140,26 @@ function MainPage() {
     }
   };
 
-  const otherUserId = selectedChat 
-    ? chats.find(chat => chat.chatId === selectedChat)?.user.otherUserId 
+  const otherUserId = selectedChat
+    ? chats.find((chat) => chat.chatId === selectedChat)?.user.otherUserId
     : null;
 
-  const otherUserStatus = otherUserId 
-    ? (onlineUsers[otherUserId] ? 'online' : 'offline') 
+  const otherUserStatus = otherUserId
+    ? (onlineUsers[otherUserId] ? 'online' : 'offline')
     : 'offline';
 
   return (
-    <div className="Main-page">
-      <div className="General-left-container">
-        <MainHeader 
-          searchQuery={searchQuery} 
-          onSearchChange={handleSearchChange} 
-          onChatCreated={handleChatCreated} 
+    <div className="main-page">
+      <div className="general-left-container">
+        <MainHeader
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onChatCreated={handleChatCreated}
+          chats={chats}
         />
-        <div className="Chats-container">
-          <a className="Chat-text">Chats</a>
-          {filteredChats.map(chat => (
+        <div className="chats-container">
+          <a className="chat-text">Chats</a>
+          {filteredChats.map((chat) => (
             <ChatItem
               key={chat.chatId}
               otherUserId={chat.user.otherUserId}
@@ -174,26 +174,26 @@ function MainPage() {
           ))}
         </div>
       </div>
-      <div className="General-right-container">
+      <div className="general-right-container">
         {selectedChat ? (
           <>
-            <SingleChatHeader 
-              name={`${chats.find(chat => chat.chatId === selectedChat).user.firstName} 
-              ${chats.find(chat => chat.chatId === selectedChat).user.lastName}`} 
+            <SingleChatHeader
+              name={`${chats.find((chat) => chat.chatId === selectedChat).user.firstName}
+              ${chats.find((chat) => chat.chatId === selectedChat).user.lastName}`}
               status={otherUserStatus}
             />
             <Conversation messages={messages} />
-            <div className="Sending-message-container">
-              <div className="Message-input-container">
-                <input 
-                  type="text" 
-                  className="message-input" 
-                  placeholder="Type your message" 
-                  value={newMessage} 
+            <div className="sending-message-container">
+              <div className="message-input-container">
+                <input
+                  type="text"
+                  className="message-input"
+                  placeholder="Type your message"
+                  value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button className='arrow-icon-button'>
-                  <FaArrowRight className="arrow-icon" onClick={handleSendMessage} /> 
+                <button className="arrow-icon-button">
+                  <FaArrowRight className="arrow-icon" onClick={handleSendMessage} />
                 </button>
               </div>
             </div>

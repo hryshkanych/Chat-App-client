@@ -1,9 +1,11 @@
 import React from 'react';
 import Avatar from '../Avatar';
 import './styles.css';
-import { FaTrash } from 'react-icons/fa'; // Імпортуйте іконку смітника
+import { FaTrash } from 'react-icons/fa';
 
 const ChatItem = ({ avatarSrc, name, message, date, status, onClick, onDelete }) => {
+  const truncatedMessage = message.length > 100 ? `${message.slice(0, 100)}...` : message;
+
   return (
     <div className="chat-item" onClick={onClick}>
       <Avatar avatarSrc={avatarSrc} status={status} />
@@ -12,12 +14,18 @@ const ChatItem = ({ avatarSrc, name, message, date, status, onClick, onDelete })
           <span className="name">{name}</span>
           <div className="end-info">
             <span className="date">{date}</span>
-            <button className="trash-button" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
-              <FaTrash className="trash-icon" /> {/* Заміна на іконку смітника */}
+            <button
+              className="trash-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
+              <FaTrash className="trash-icon" />
             </button>
           </div>
         </div>
-        <div className="message">{message}</div>
+        <div className="message">{truncatedMessage}</div>
       </div>
     </div>
   );

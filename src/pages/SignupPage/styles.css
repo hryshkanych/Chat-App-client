@@ -1,81 +1,78 @@
-.Sign-up-page {
-    height: 100vh;
-    width: 100vw;
-    background: linear-gradient(135deg, #dba6e7 0%, #f1c29e 100%); 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.sign-up-page {
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #dba6e7 0%, #f1c29e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sign-up-container {
-    width: 30%;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    background-color: #f9f9f9;
-    box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1); 
-  }
+  width: 30%;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
+}
 
-  .sign-up-form {
-    gap: 1rem;
-    height: 75%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .sign-up-form input {
-    height: 2rem;
-    font-size: 1rem;
-    border-radius: 1rem;
-    border: 0.063rem solid #ccc; 
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  .sign-up-form input:focus {
-    outline: none;
-    border-color: #9f2256;
-  }
-  
-  /* Buttons */
-  .sign-up-button {
-    height: 2.5rem;
-    border-radius: 1.25rem;
-    border: none;
-    background-color: #bb73a2;
-    color: white;
-    cursor: pointer;
-  }
-  
-  .sign-up-button:hover {
-    background-color: #47283f;
-  }
-  
-  .google-sign-up-button {
-    height: 2.5rem;
-    border-radius: 1.25rem;
-    border: 0.063rem solid #9f1483;
-    background-color: white;
-    color: #9f1483;
-    cursor: pointer;
-  }
-  
-  .google-sign-up-button:hover {
-    background-color: #f0f0f0;
-  }
-  
-  /* Login prompt */
-  .login-prompt {
-    text-align: center;
-    margin-top: 1rem;
-  }
-  
-  .login-prompt a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .login-prompt a:hover {
-    text-decoration: underline;
-  }
-  
+.sign-up-form {
+  gap: 1rem;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sign-up-form input {
+  height: 2rem;
+  font-size: 1rem;
+  border-radius: 1rem;
+  border: 0.063rem solid #ccc;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.sign-up-form input:focus {
+  outline: none;
+  border-color: #9f2256;
+}
+
+.sign-up-button {
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  border: none;
+  background-color: #bb73a2;
+  color: white;
+  cursor: pointer;
+}
+
+.sign-up-button:hover {
+  background-color: #47283f;
+}
+
+.google-sign-up-button {
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  border: 0.063rem solid #9f1483;
+  background-color: white;
+  color: #9f1483;
+  cursor: pointer;
+}
+
+.google-sign-up-button:hover {
+  background-color: #f0f0f0;
+}
+
+.login-prompt {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.login-prompt a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}

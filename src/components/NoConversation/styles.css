@@ -1,21 +1,20 @@
 .no-conversation-container {
-    flex: 1;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(252, 240, 255);
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #dba6e790 0%, #f1c29e63 100%);
+  justify-content: center;
+  align-items: center;
 }
 
 .text-wrapper {
-    background-color: rgba(111, 102, 120, 0.174);
-    padding: 0.5rem;
-    border-radius: 2rem;
+  background-color: rgba(111, 102, 120, 0.174);
+  padding: 0.5rem;
+  border-radius: 2rem;
 }
 
-.text-wrapper a{
-    margin-left: 1rem;
-    margin-right: 1rem;
+.text-wrapper a {
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
-

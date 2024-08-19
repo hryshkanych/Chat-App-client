@@ -1,27 +1,27 @@
 .avatar-status {
-    display: flex;
-    align-items: flex-end;
+  display: flex;
+  align-items: flex-end;
 }
 
 .avatar {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .status-circle {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 50%;
-    margin-left: -0.5rem;
-    border: 0.0625rem solid #333;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  margin-left: -0.5rem;
+  border: 0.0625rem solid #333;
 }
 
 .online {
-    background-color: green;
+  background-color: green;
 }
 
 .offline {
-    background-color: rgb(139, 133, 133);
+  background-color: rgb(139, 133, 133);
 }

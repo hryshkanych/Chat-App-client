@@ -1,0 +1,30 @@
+.autores-item {
+  padding: 1rem;
+  border-bottom: 1px solid #723d59;
+  border-top: 1px solid #723d59;
+  transition: background-color 0.3s ease;
+  background-color: rgb(226, 179, 206);
+  min-height: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.autores-item:hover {
+  background-color: #d1c6d2;
+}
+
+.autores-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.autores-name {
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+.arrow-go-icon {
+  color: #000000;
+}
