@@ -28,12 +28,14 @@ function ModalCreateChat({ isOpen, onClose, onCreate }) {
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            required
             />
             <input
             type="text"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            required
             />
             <button className="create-button" onClick={handleCreateClick}>
             Create

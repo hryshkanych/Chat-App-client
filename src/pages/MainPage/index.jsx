@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import './styles.css';
-import { io } from 'socket.io-client';
 import avatarGuestPic from '../../assets/avatar-guest.png';
 import MainHeader from '../../components/MainHeader';
 import ChatItem from '../../components/ChatItem';
 import SingleChatHeader from '../../components/SingleChatHeader';
 import { FaArrowRight } from 'react-icons/fa';
 import Conversation from '../../components/Conversation';
-import { getUserChats, getMessagesInChat } from '../../services/chatService';
+import { getUserChats, getMessagesInChat, deleteChat } from '../../services/chatService';
 import { useUserContext } from '../../contexts/userContext';
 import NoConversation from '../../components/NoConversation';
-
-const socket = io('http://localhost:3000');
+import { useSocketContext } from '../../contexts/socketContext';
+import { toast } from 'react-toastify';
 
 function MainPage() {
   const [chats, setChats] = useState([]);
@@ -19,21 +18,9 @@ function MainPage() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [onlineUsers, setOnlineUsers] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useUserContext();
-
-  useEffect(() => {
-    socket.emit('userConnected', user.id);
-
-    socket.on('updateUserList', (users) => {
-      setOnlineUsers(users);
-    });
-
-    return () => {
-      socket.off('updateUserList');
-    };
-  }, [user.id]);
+  const { socket, onlineUsers } = useSocketContext();
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -51,18 +38,12 @@ function MainPage() {
   }, [user]);
 
   useEffect(() => {
-    if (selectedChat) {
-      socket.emit('joinChat', { chatId: selectedChat });
-
-      socket.on('receiveMessage', (message) => {
-        if (message.chatId === selectedChat) {
-          setMessages((prevMessages) => [...prevMessages, message]);
-        }
-
+    if (socket) {
+      socket.on('receiveMessage', (newMessage) => {
         const updateChats = (chatList) => {
           const updatedChats = chatList.map((chat) =>
-            chat.chatId === message.chatId
-              ? { ...chat, lastMessage: message }
+            chat.chatId === newMessage.chatId
+              ? { ...chat, lastMessage: newMessage }
               : chat
           );
           return updatedChats.sort((a, b) =>
@@ -73,13 +54,19 @@ function MainPage() {
         const updatedChats = updateChats(chats);
         setChats(updatedChats);
         filterChats(updatedChats, searchQuery);
-      });
-    }
 
-    return () => {
-      socket.off('receiveMessage');
-    };
-  }, [selectedChat, chats, searchQuery]);
+        if (newMessage.chatId === selectedChat) {
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        } else if (newMessage.senderId !== user.id) {
+          toast.info(`${newMessage.senderName}: ${newMessage.text}`);
+        }
+      });
+
+      return () => {
+        socket.off('receiveMessage');
+      };
+    }
+  }, [selectedChat, chats, searchQuery, messages, socket, user.id]);
 
   const handleChatClick = async (chatId) => {
     try {
@@ -97,16 +84,21 @@ function MainPage() {
         senderId: user.id,
         chatId: selectedChat,
         text: newMessage,
-        createdAt: new Date().toISOString(), 
+        createdAt: new Date().toISOString(),
       };
       socket.emit('sendMessage', message);
       setNewMessage('');
+
+      if (selectedChat === message.chatId) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
 
       const updatedChats = chats.map((chat) =>
         chat.chatId === selectedChat
           ? { ...chat, lastMessage: message }
           : chat
       );
+
       setChats(updatedChats);
       filterChats(updatedChats, searchQuery);
     }
@@ -119,7 +111,7 @@ function MainPage() {
 
   const filterChats = (chatList, query) => {
     const lowercasedQuery = query.toLowerCase();
-    const filtered = chatList.filter(chat =>
+    const filtered = chatList.filter((chat) =>
       chat.user.firstName.toLowerCase().includes(lowercasedQuery) ||
       chat.user.lastName.toLowerCase().includes(lowercasedQuery)
     );
@@ -131,25 +123,43 @@ function MainPage() {
     filterChats([...chats, newChat], searchQuery);
   };
 
-  const otherUserId = selectedChat 
-    ? chats.find(chat => chat.chatId === selectedChat)?.user.otherUserId 
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await deleteChat(chatId);
+
+      const updatedChats = chats.filter((chat) => chat.chatId !== chatId);
+      setChats(updatedChats);
+      filterChats(updatedChats, searchQuery);
+
+      if (selectedChat === chatId) {
+        setSelectedChat(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
+  };
+
+  const otherUserId = selectedChat
+    ? chats.find((chat) => chat.chatId === selectedChat)?.user.otherUserId
     : null;
 
-  const otherUserStatus = otherUserId 
-    ? (onlineUsers[otherUserId] ? 'online' : 'offline') 
+  const otherUserStatus = otherUserId
+    ? (onlineUsers[otherUserId] ? 'online' : 'offline')
     : 'offline';
 
   return (
-    <div className="Main-page">
-      <div className="General-left-container">
-        <MainHeader 
-          searchQuery={searchQuery} 
-          onSearchChange={handleSearchChange} 
-          onChatCreated={handleChatCreated} 
+    <div className="main-page">
+      <div className="general-left-container">
+        <MainHeader
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onChatCreated={handleChatCreated}
+          chats={chats}
         />
-        <div className="Chats-container">
-          <a className="Chat-text">Chats</a>
-          {filteredChats.map(chat => (
+        <div className="chats-container">
+          <a className="chat-text">Chats</a>
+          {filteredChats.map((chat) => (
             <ChatItem
               key={chat.chatId}
               otherUserId={chat.user.otherUserId}
@@ -159,30 +169,31 @@ function MainPage() {
               date={chat.lastMessage ? new Date(chat.lastMessage.createdAt).toLocaleDateString() : ''}
               status={onlineUsers[chat.user.otherUserId] ? 'online' : 'offline'}
               onClick={() => handleChatClick(chat.chatId)}
+              onDelete={() => handleDeleteChat(chat.chatId)}
             />
           ))}
         </div>
       </div>
-      <div className="General-right-container">
+      <div className="general-right-container">
         {selectedChat ? (
           <>
-            <SingleChatHeader 
-              name={`${chats.find(chat => chat.chatId === selectedChat).user.firstName} 
-              ${chats.find(chat => chat.chatId === selectedChat).user.lastName}`} 
+            <SingleChatHeader
+              name={`${chats.find((chat) => chat.chatId === selectedChat).user.firstName}
+              ${chats.find((chat) => chat.chatId === selectedChat).user.lastName}`}
               status={otherUserStatus}
             />
             <Conversation messages={messages} />
-            <div className="Sending-message-container">
-              <div className="Message-input-container">
-                <input 
-                  type="text" 
-                  className="message-input" 
-                  placeholder="Type your message" 
-                  value={newMessage} 
+            <div className="sending-message-container">
+              <div className="message-input-container">
+                <input
+                  type="text"
+                  className="message-input"
+                  placeholder="Type your message"
+                  value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button className='arrow-icon-button'>
-                  <FaArrowRight className="arrow-icon" onClick={handleSendMessage} /> 
+                <button className="arrow-icon-button">
+                  <FaArrowRight className="arrow-icon" onClick={handleSendMessage} />
                 </button>
               </div>
             </div>

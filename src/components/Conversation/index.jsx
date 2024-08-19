@@ -11,16 +11,26 @@ const Conversation = ({ messages }) => {
     if (conversationEndRef.current) {
       conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]); 
+  }, [messages]);
 
   return (
-    <div className="Conversation-container">
+    <div className="сonversation-container">
       {messages.map((msg, index) => (
-        msg.senderId === user.id ? 
-          <SentMessage key={index} text={msg.text} createdAt={new Date(msg.createdAt).toLocaleString()} /> :
-          <ReceivedMessage key={index} text={msg.text} createdAt={new Date(msg.createdAt).toLocaleString()} />
+        msg.senderId === user.id ? (
+          <SentMessage
+            key={index}
+            text={msg.text}
+            createdAt={new Date(msg.createdAt).toLocaleString()}
+          />
+        ) : (
+          <ReceivedMessage
+            key={index}
+            text={msg.text}
+            createdAt={new Date(msg.createdAt).toLocaleString()}
+          />
+        )
       ))}
-      <div ref={conversationEndRef} /> 
+      <div ref={conversationEndRef} />
     </div>
   );
 };
